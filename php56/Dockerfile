@@ -44,6 +44,18 @@ ARG INSTALL_MYSQLI_EXTENSION=false
 RUN if [ ${INSTALL_MYSQLI_EXTENSION} = true ];  then \
     docker-php-ext-install mysqli \
 ;fi
+ARG INSTALL_MONGO_EXTENSION=false
+ARG MONGO_EXTENSION_VERSION=1.6.0
+RUN if [ ${INSTALL_MONGO_EXTENSION} = true ];  then \
+    curl -L -o /tmp/mongo.tgz https://pecl.php.net/get/mongo-${MONGO_EXTENSION_VERSION}.tgz \
+    && tar xfz /tmp/mongo.tgz \
+    && mkdir -p /usr/src/php/ext \
+    && mv mongo-${MONGO_EXTENSION_VERSION} /usr/src/php/ext/mongo \
+    && docker-php-ext-install mongo \
+    && rm -rf /usr/src/php \
+    && rm -rf /tmp/mongo.tgz \
+;fi
+
 ARG INSTALL_MONGODB_EXTENSION=false
 ARG MONGODB_EXTENSION_VERSION=1.8.2
 RUN if [ ${INSTALL_MONGODB_EXTENSION} = true ];  then \
