@@ -1,0 +1,2 @@
+[27-Apr-2021 09:11:42 UTC] PHP Warning:  require(/usr/share/nginx/html/HopeArt/crontab/../../autoload.php): failed to open stream: No such file or directory in /usr/share/nginx/html/HopeArt/crontab/aixiao on line 18
+[27-Apr-2021 09:11:42 UTC] PHP Fatal error:  require(): Failed opening required '/usr/share/nginx/html/HopeArt/crontab/../../autoload.php' (include_path='.:/usr/local/lib/php') in /usr/share/nginx/html/HopeArt/crontab/aixiao on line 18

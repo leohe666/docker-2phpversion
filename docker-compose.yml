@@ -1,0 +1,109 @@
+version: '3'
+networks:
+    frontend:
+        driver: ${NETWORKS_DRIVER}
+    backend:
+        driver: ${NETWORKS_DRIVER}
+services: 
+    nginx:
+        build:
+            context: ./nginx
+        container_name: nginx
+        environment:
+            - TZ=${WORKSPACE_TIMEZONE}
+        ports:
+            - 80:80
+        volumes:
+            - ${WORKSPACE_WEBROOT_VHOST_PATH}:/etc/nginx/conf.d
+            - ${WORKSPACE_WEBROOT_PATH}:${CONTAINER_WEBROOT_PATH}
+        links:
+            - php74
+            - php56
+        depends_on:
+            - php74
+            - php56
+        networks:
+            frontend:
+                aliases:
+                    - test.test.com
+            backend:
+                aliases:
+                    - test.test.com
+                    - test.test.loc
+    php56:
+        build:
+            context: ./php56
+            args:
+                - WEBROOT_PATH=${CONTAINER_WEBROOT_PATH}
+                - PHP_VERSION=${PHP_56_VERSION}
+                - INSTALL_PHPPHALCON_EXTENSION=${INSTALL_PHPPHALCON_EXTENSION}
+                - INSTALL_PHPGD_EXTENSION=${INSTALL_PHPGD_EXTENSION}
+                - PHPREDIS_VERSION=${PHPREDIS_56_VERSION}
+                - INSTALL_PHPREDIS_EXTENSION=${INSTALL_PHPREDIS_EXTENSION}
+                - INSTALL_ZIP_EXTENSION=${INSTALL_ZIP_EXTENSION}
+                - INSTALL_BCMATH_EXTENSION=${INSTALL_BCMATH_EXTENSION}
+                - INSTALL_MYSQLI_EXTENSION=${INSTALL_MYSQLI_EXTENSION}
+                - MONGODB_EXTENSION_VERSION=${MONGODB_EXTENSION_VERSION}
+                - INSTALL_MONGODB_EXTENSION=${MONGODB_56_EXTENSION_VERSION}
+        container_name: php56
+        environment:
+            - TZ=${WORKSPACE_TIMEZONE}
+        volumes:
+            - ${WORKSPACE_WEBROOT_PATH}:${CONTAINER_WEBROOT_PATH}
+            - ./php56/php.ini:/usr/local/etc/php/php.ini
+            - ./php56/php_errors.log:/tmp/php_errors.log
+        networks:
+            - backend
+    php74:
+        build:
+            context: ./php74
+            args:
+                - WEBROOT_PATH=${CONTAINER_WEBROOT_PATH}
+                - PHP_VERSION=${PHP_VERSION}
+                - PHPREDIS_VERSION=${PHPREDIS_VERSION}
+                - INSTALL_PHPREDIS_EXTENSION=${INSTALL_PHPREDIS_EXTENSION}
+                - INSTALL_ZIP_EXTENSION=${INSTALL_ZIP_EXTENSION}
+                - INSTALL_BCMATH_EXTENSION=${INSTALL_BCMATH_EXTENSION}
+                - INSTALL_MYSQLI_EXTENSION=${INSTALL_MYSQLI_EXTENSION}
+                - MONGODB_EXTENSION_VERSION=${MONGODB_EXTENSION_VERSION}
+                - INSTALL_MONGODB_EXTENSION=${INSTALL_MONGODB_EXTENSION}
+        container_name: php74
+        environment:
+            - TZ=${WORKSPACE_TIMEZONE}
+        volumes:
+            - ${WORKSPACE_WEBROOT_PATH}:${CONTAINER_WEBROOT_PATH}
+            - ./php74/php.ini:/usr/local/etc/php/php.ini
+            - ./php74/php_errors.log:/tmp/php_errors.log
+        networks:
+            - backend
+    
+    # mysql:
+    #     build:
+    #         context: ./mysql
+    #         args:
+    #             - MYSQL_VERSION=${MYSQL_VERSION}
+    #     environment:
+    #         - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+    #         - TZ=${WORKSPACE_TIMEZONE}
+    #     container_name: mysql
+    #     ports:
+    #         - ${LOCAL_MYSQL_PORT}:3306
+    #     volumes:
+    #         - ${LOCAL_MYSQL_DATA_PATH}:/var/lib/mysql
+    #         - ./mysql/my.cnf:/etc/alternatives/my.cnf
+    #         - ./mysql/slow.log:/tmp/slow.log
+    #     networks:
+    #         - backend
+    # redis:
+    #     build:
+    #         context: ./redis
+    #     container_name: myredis
+    #     environment:
+    #         - TZ=${WORKSPACE_TIMEZONE}
+    #     ports:
+    #         - ${LOCAL_REDIS_PORT}:6379
+    #     volumes:
+    #         - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
+    #         - ${LOCAL_REDIS_DATA_PATH}:/data
+    #     networks:
+    #         - backend
