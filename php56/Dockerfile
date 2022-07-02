@@ -7,7 +7,8 @@ RUN mkdir -p ${WEBROOT_PATH} \
     && docker-php-ext-install pdo_mysql 
 ARG INSTALL_PHPGD_EXTENSION=false
 RUN if [ ${INSTALL_PHPGD_EXTENSION} = true ];  then \
-    apt-get update && apt-get install -y libpng-dev zlib1g-dev \
+    apt-get update && apt-get update && apt-get install -y libfreetype6-dev libmcrypt-dev libpng-dev libjpeg-dev libpng-dev \
+    && docker-php-ext-configure gd  --enable-gd-native-ttf  --with-freetype-dir=/usr/include/freetype2  --with-png-dir=/usr/include  --with-jpeg-dir=/usr/include \
     && docker-php-ext-install gd \
 ;fi
 ARG INSTALL_PHPPHALCON_EXTENSION=false
