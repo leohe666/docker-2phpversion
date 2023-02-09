@@ -16,6 +16,7 @@ services:
         volumes:
             - ${WORKSPACE_WEBROOT_VHOST_PATH}:/etc/nginx/conf.d
             - ${WORKSPACE_WEBROOT_PATH}:${CONTAINER_WEBROOT_PATH}
+            - ./nginx/nginx.conf:/etc/nginx/nginx.conf
         links:
             - php74
             - php56
